@@ -49,5 +49,5 @@ tcp_server: $(TCP_SERVER_SOURCE)
 TCP_CLIENT_OBJ = tcp_client
 TCP_CLIENT_SOURCE = tcp_client.c
 
-client: $(TCP_CLIENT_SOURCE)
+tcp_client: $(TCP_CLIENT_SOURCE)
 	$(CC) -std=$(STD_C) -o $(TCP_CLIENT_OBJ) $(TCP_CLIENT_SOURCE)
