@@ -5,7 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <unistd.h>
+#include <arpa/inet.h>
+
 
 #define PORT 8080
 
@@ -25,13 +28,20 @@ int main(int argc, char const* argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	// Forcefully attaching socket to the port 8080
-	if (setsockopt(server_fd, SOL_SOCKET,
-				SO_REUSEADDR | SO_REUSEPORT, &opt,
-				sizeof(opt))) {
-		perror("setsockopt");
-		exit(EXIT_FAILURE);
-	}
+    // Forcefully attaching socket to the port 8080
+    // Optionally set SO_REUSEPORT if it is defined
+#ifdef SO_REUSEPORT
+    if (setsockopt(server_fd, SOL_SOCKET, 
+                SO_REUSEADDR | SO_REUSEPORT, &opt, 
+                sizeof(opt))) {
+#else
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))) {
+#endif
+        perror("setsockopt");
+        exit(EXIT_FAILURE);
+    }
+
+
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
 	address.sin_port = htons(PORT);
