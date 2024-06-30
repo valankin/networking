@@ -23,7 +23,7 @@ SERVER_OBJ = server
 SERVER_SOURCE = server.c
 
 server: $(SERVER_SOURCE)
-        $(CC) -std=$(STD_C) -o $(SERVER_OBJ) $(SERVER_SOURCE)
+	$(CC) -std=$(STD_C) -o $(SERVER_OBJ) $(SERVER_SOURCE)
 
 
 ## Client
@@ -31,4 +31,4 @@ CLIENT_OBJ = client
 CLIENT_SOURCE = client.c
 
 client: $(CLIENT_SOURCE)
-        $(CC) -std=$(STD_C) -o $(SERVER_OBJ) $(SERVER_SOURCE)
+	$(CC) -std=$(STD_C) -o $(SERVER_OBJ) $(SERVER_SOURCE)
