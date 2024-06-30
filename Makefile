@@ -31,4 +31,4 @@ CLIENT_OBJ = client
 CLIENT_SOURCE = client.c
 
 client: $(CLIENT_SOURCE)
-	$(CC) -std=$(STD_C) -o $(SERVER_OBJ) $(SERVER_SOURCE)
+	$(CC) -std=$(STD_C) -o $(CLIENT_OBJ) $(CLIENT_SOURCE)
