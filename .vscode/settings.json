@@ -1,0 +1,18 @@
+{
+    "files.associations": {
+        "string.h": "c",
+        "inet.h": "c",
+        "socket.h": "c",
+        "stdlib.h": "c",
+        "in.h": "c",
+        "netdb.h": "c",
+        "unistd.h": "c",
+        "stdio.h": "c",
+        "strings.h": "c",
+        "server.h": "c",
+        "tcp_settings.h": "c",
+        "tcp_server.h": "c",
+        "tcp_functions.h": "c",
+        "__config": "c"
+    }
+}

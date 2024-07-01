@@ -1,0 +1,46 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build TCP Server",
+            "type": "shell",
+            "command": "clang",
+            "args": [
+                "-std=c17",
+                "-w",
+                "-I./src/tcp/include",
+                "-o",
+                "tcp_server",
+                "main.c",
+                "./src/tcp/tcp_server.c",
+                "./src/tcp/tcp_functions.c"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "Compiles the TCP server"
+        },
+        {
+            "label": "Build TCP Client",
+            "type": "shell",
+            "command": "clang",
+            "args": [
+                "-std=c17",
+                "-w",
+                "-I./src/tcp/include",
+                "-o",
+                "tcp_client",
+                "./src/tcp/tcp_client.c",
+                "./src/tcp/tcp_functions.c"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "Compiles the TCP client"
+        }
+    ]
+}

@@ -1,7 +1,8 @@
 
-# Configuration
+# Compiler configuration
+
 ## CC specifies which compiler we're using
-CC = gcc
+CC = clang
 
 ## COMPILER_FLAGS specifies the additional compilation options
 ### -w suppresses all warnings
@@ -14,40 +15,30 @@ COMPILER_FLAGS = -w
 STD_C=c17
 
 
+# TCP communication
 
+## Source sonfiguration
+TCP_HOME = ./src/tcp
+TCP_INCLUDE = $(TCP_HOME)/include
 
-# Socket communication
-
-## Server
-SERVER_OBJ = server
-SERVER_SOURCE = server.c
-
-server: $(SERVER_SOURCE)
-	$(CC) -std=$(STD_C) -o $(SERVER_OBJ) $(SERVER_SOURCE)
-
-
-## Client
-CLIENT_OBJ = client
-CLIENT_SOURCE = client.c
-
-client: $(CLIENT_SOURCE)
-	$(CC) -std=$(STD_C) -o $(CLIENT_OBJ) $(CLIENT_SOURCE)
-
-
-
-# TCP Server - Client
-
-## TCP Server
+### Server Configuration
+TCP_SERVER_SOURCE = main.c $(TCP_HOME)/tcp_server.c $(TCP_HOME)/tcp_functions.c 
 TCP_SERVER_OBJ = tcp_server
-TCP_SERVER_SOURCE = tcp_server.c
 
-tcp_server: $(TCP_SERVER_SOURCE)
-	$(CC) -std=$(STD_C) -o $(TCP_SERVER_OBJ) $(TCP_SERVER_SOURCE)
-
-
-## TCP Client
+### Client configuration
+TCP_CLIENT_SOURCE = $(TCP_HOME)/tcp_client.c $(TCP_HOME)/tcp_functions.c
 TCP_CLIENT_OBJ = tcp_client
-TCP_CLIENT_SOURCE = tcp_client.c
 
+## Compile entrypoints
+### Server
+tcp_server: $(TCP_SERVER_SOURCE)
+	$(CC) -std=$(STD_C) $(COMPILER_FLAGS) \
+		-I$(TCP_INCLUDE) \
+		-o $(TCP_SERVER_OBJ) \
+		$(TCP_SERVER_SOURCE)
+### Client
 tcp_client: $(TCP_CLIENT_SOURCE)
-	$(CC) -std=$(STD_C) -o $(TCP_CLIENT_OBJ) $(TCP_CLIENT_SOURCE)
+	$(CC) -std=$(STD_C) $(COMPILER_FLAGS) \
+		-I$(TCP_INCLUDE) \
+		-o $(TCP_CLIENT_OBJ) \
+		$(TCP_CLIENT_SOURCE)

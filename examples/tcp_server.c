@@ -1,14 +1,33 @@
+// # [TCP Server-Client implementation in C](https://www.geeksforgeeks.org/tcp-server-client-implementation-in-c/)
+
 #include <stdio.h> 
 #include <netdb.h> 
 #include <netinet/in.h> 
 #include <stdlib.h> 
-#include <string.h> 
+
 #include <sys/socket.h> 
 #include <sys/types.h> 
-#include <unistd.h> // read(), write(), close()
-#define MAX 80 
-#define PORT 8080 
-#define SA struct sockaddr 
+
+
+// Posix API
+// https://en.wikipedia.org/wiki/Unistd.h
+#include <unistd.h> 
+// Use man 2 <foo_name> on you system or check links
+// read() - https://linux.die.net/man/2/read
+// write() - https://linux.die.net/man/2/write
+// close() - https://linux.die.net/man/2/close
+// bind() - https://linux.die.net/man/2/bind
+
+
+// Strings
+// https://en.wikipedia.org/wiki/C_string_handling
+#include <string.h> 
+// bzero() - https://linux.die.net/man/3/bzero
+
+
+#define MAX 80 // Number of chars in the buffer
+#define PORT 8080 // Bind port
+#define SA struct sockaddr // length, address family, addr value
 
 // Function designed for chat between client and server. 
 void func(int connfd) 
@@ -61,9 +80,10 @@ int main()
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY); 
 	servaddr.sin_port = htons(PORT); 
 
-	// Binding newly created socket to given IP and verification 
-	if ((bind(sockfd, (SA*)&servaddr, sizeof(servaddr))) != 0) { 
-		printf("socket bind failed...\n"); 
+	// Binding newly created socket to given IP and verification
+	int bind_code =  bind(sockfd, (SA*)&servaddr, sizeof(servaddr));
+	if (bind_code != 0) { 
+		printf("Socket bind failed with bind code = %d\n", bind_code); 
 		exit(0); 
 	} 
 	else

@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch TCP Server",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/tcp_server",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build TCP Server",
+            "stopOnEntry": false,
+            "externalConsole": false
+        },
+        {
+            "name": "Launch TCP Client",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/tcp_client",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build TCP Client",
+            "stopOnEntry": false,
+            "externalConsole": false
+        }
+    ]
+}
