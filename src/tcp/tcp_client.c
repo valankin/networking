@@ -14,6 +14,7 @@
 
 #include "tcp_functions.h"
 #include "tcp_settings.h"
+#include "message.h"
 
 
 /**
@@ -33,7 +34,9 @@ struct sockaddr_in server_address()
     return servaddr;
 }
 
-int start_client() {
+
+
+int start_client(Message *msg) {
     // init server address sreucture
     struct sockaddr_in servaddr = server_address();
  
@@ -47,7 +50,25 @@ int start_client() {
     printf("Connection code: %d\n", conn_code);
 
     // Use connection if successfull
-    if (conn_code == SOCK_CONN_OK) ping(sockfd);
+    // if (conn_code == SOCK_CONN_OK) {
+    //     message_function_t func = get_function_by_name(msg->function_name);
+    //     printf("Called function: %s", func);
+    //     if (func) {
+    //         func(msg);
+    //     } else {
+    //         printf("Function '%s' not found.\n", msg->function_name);
+    //     }
+    // }
+    if (conn_code == SOCK_CONN_OK) {
+        message_function_t func = get_function_by_name(msg->function_name);
+        printf("Called function: %p\n", func);
+        if (func) {
+            printf("Using socket fd %d to send message...\n", sockfd); // Debugging statement
+            func(sockfd, msg); // Pass the socket fd and the message
+        } else {
+            printf("Function '%s' not found.\n", msg->function_name);
+        }
+    }
     
     // Close the socket
     close_socket(sockfd);
@@ -56,6 +77,7 @@ int start_client() {
 }
 
 int main() {
-    start_client();
+    Message msg = create_default_client_message();
+    start_client(&msg);
     return 0;
 }

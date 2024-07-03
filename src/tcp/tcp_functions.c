@@ -1,13 +1,3 @@
-/**
- * @file tcp_functions.c
- * @author Yuri Valankin (valankin@.com)
- * @brief Functions that are applied to connection file descriptors
- * @date 2024-07-01
- * 
- * @copyright Copyright (c) 2024
- * 
- */
-
 #include <stdio.h> // printf
 #include <errno.h> // error codes
 #include <stdlib.h> // exit
@@ -18,19 +8,16 @@
 #include <sys/socket.h> // socket, connect, close
 #include <arpa/inet.h> // for sockaddr_in and inet_pton
 
+#include "message.h"
 #include "tcp_functions.h"
 #include "tcp_settings.h"
 
-
 // Buffer
-
-void clear_buff(char *buff)
-{
+void clear_buff(char *buff) {
     memset(buff, BUFFER_FILL_VALUE, CHAR_BUFFER_SIZE);
 }
 
-char* heap_buff()
-{
+char* heap_buff() {
     int buff_size_bytes = CHAR_BUFFER_SIZE * sizeof(char);
     char *buff = (char *)malloc(buff_size_bytes);
     if (buff == NULL) {
@@ -41,113 +28,88 @@ char* heap_buff()
         exit(1);
     }
     clear_buff(buff);
-
     printf("Allocated heap buffer of size [%d bytes]\n", buff_size_bytes);
     return buff;
 }
 
-void exit_if_signalled(char *buff)
-{
+void exit_if_signalled(char *buff) {
     if ((strncmp(buff, "exit", 4)) == 0) {
-			printf("Exiting...\n");
-            exit(0);
+        printf("Exiting...\n");
+        exit(0);
     }
 }
 
-void load_message(char *buff)
-{   
+void load_message(char *buff) {   
     printf("Send text: ");
     int n = 0;
-	while ((buff[n++] = getchar()) != '\n');
+    while ((buff[n++] = getchar()) != '\n');
     buff[n - 1] = '\0';  // Null-terminate the string
 }
 
-
 // Socket
-int create_socket()
-{   
+int create_socket() {   
     int sockfd = socket(SOCKET_DOMAIN, SOCKET_TYPE, SOCKET_PROTOCOL);
-
     if (sockfd == SOCK_CREATE_ERR) {
         printf("Error connecting to socket: (%d) %s\n", 
                 errno, 
                 strerror(errno));
         exit(0);
-    } else
+    } else {
         printf("Socket successfully created..\n");
         return sockfd;
+    }
 }
 
-
- /**
-     * @brief Binds the socket to the IP address and port specified in servaddr using the bind function.
-     * If bind_code is not 0, it indicates a failure, so it prints an error message and exits the program. Otherwise, it prints a success message.
-     */
-int bind_socket(int sockfd, struct sockaddr_in* servaddr)
-{
+int bind_socket(int sockfd, struct sockaddr_in* servaddr) {
     int bind_code = bind(sockfd, (struct sockaddr*)servaddr, sizeof(*servaddr));
     if (bind_code == SOCK_BIND_ERR) {
         printf("Error binding to socket: (%d) %s\n", 
                 errno, 
                 strerror(errno));        
         exit(0);
-    } else
+    } else {
         printf("Socket successfully binded..\n");
         return SOCK_BIND_OK;
+    }
 }
 
-
-int listen_connections(int sockfd)
-{
-    /**
-     * @brief Now server is ready to listen and verification
-     * Puts the server socket in a listening state using the listen function 
-     * with a backlog of 5 (the maximum length to which the queue of pending connections may grow).
-     * If the listen function returns a non-zero value, it indicates a failure, 
-     * so it prints an error message and exits the program. 
-     * Otherwise, it prints a success message.
-     * 
-     */
+int listen_connections(int sockfd) {
     if ((listen(sockfd, SOCK_MAX_CONNECTIONS)) == SOCK_LISTEN_ERR) {
         printf("Error listening connections: (%d) %s\n", 
                 errno, 
                 strerror(errno));
         exit(0);
-    } else
+    } else {
         printf("Server listening..\n");
         return SOCK_LISTEN_OK;
+    }
 }
 
-
-int accept_connection(int sockfd, struct sockaddr_in* cliaddr)
-{
-    // Accept the data packet from client
+int accept_connection(int sockfd, struct sockaddr_in* cliaddr) {
     socklen_t len = sizeof(cliaddr);
     int connfd = accept(sockfd, (struct sockaddr*)&cliaddr, &len);
     if (connfd == SOCK_ACCEPT_ERR) {
         printf("Server accept failed...\n");
         printf("Error connecting to server socket: (%d) %s\n", errno, strerror(errno));
         exit(0);
-    } else
+    } else {
         printf("Server accepted the client...\n");
         return connfd;
+    }
 }
 
-
-int connect_to_socket(int sockfd, struct sockaddr_in* servaddr)
-{
-    // connect the client socket to server socket
+int connect_to_socket(int sockfd, struct sockaddr_in* servaddr) {
     int connect_code = connect(sockfd, (struct sockaddr*)servaddr, sizeof(*servaddr));
     if (connect_code == SOCK_CONN_ERR) {
         printf("Error connecting to socket: (%d) %s\n", errno, strerror(errno));
         exit(0);
-    } else
+    } else {
         printf("Connected to socket..\n");
         return SOCK_CONN_OK;
+    }
 }
 
-int close_socket(int sockfd)
-{
+int close_socket(int sockfd) {
     int close_code = close(sockfd);
     if (close_code == SOCK_CLOSE_ERR) {
         printf("Error closing socket: %s\n", strerror(errno));
@@ -158,72 +120,44 @@ int close_socket(int sockfd)
     }
 }
 
-// Messages
-void send_message(char *buff, int sockfd)
-{
-    write(sockfd, buff, CHAR_BUFFER_SIZE);
-}
-
-/**
- * @brief Reads from file descriptor
- * 
- * @param fd - connection or docker fd
- * @param buff - char buffer
- */
-void read_message(int fd, char *buff)
-{
-    clear_buff(buff);
-    read(fd, buff, CHAR_BUFFER_SIZE);
-
-    // Clear buffer
-    printf("Received: %s\n", buff);
-	
-}
-
-
 // Higher level functions
 
-void ping(int sockfd)
-{   
-    // Message buffer
-    char* buff = heap_buff();	
+// Ping pong with user input
+void ping(int sockfd) {   
+    char* buff = heap_buff();
+    time(NULL);
 
-    // Send message and receive message
-	for (;;) {
-        // Load message into the buffer
+    for (;;) {
         load_message(buff);
-
-        // Checks if input equals "exit"
         exit_if_signalled(buff);
-
-        // Write buffer into socket
-        send_message(buff, sockfd);
-
-        // Read from socket into the buffer
-        read_message(sockfd, buff);
-	}
+        send_message(sockfd, buff);
+        receive_message(sockfd, buff);
+    }
     free(buff);
 }
 
 void pong(int connfd) {
-
-    // Message buffer
     char* buff = heap_buff();
 
-    // Read and reply
     for (;;) {
-        // Read from fd into buff
-        read_message(connfd, buff);
-
-        // Checks if input equals "exit"
-        // TODO: does not exit when typed
+        receive_message(connfd, buff);
         exit_if_signalled(buff);
-
-        // Load message into the buffer
         load_message(buff);
-
-        // Write buffer into connection fd
-        send_message(buff, connfd);
+        send_message(connfd, buff);
     }
     free(buff);
+}
+
+// Send and save a file
+void send_msg(int sockfd, Message *msg) {   
+    send_structured_message(sockfd, msg);
+    printf("Send message: Caller ID=%s, Message ID=%s, Timestamp=%ld, Data=%s\n", 
+                      msg->caller_id, msg->message_id, msg->timestamp, msg->data);
+}
+
+void receive_msg(int connfd) {
+    Message msg;
+    receive_structured_message(connfd, &msg);
+    printf("Received message: Caller ID=%s, Message ID=%s, Timestamp=%ld, Data=%s\n", 
+                      msg.caller_id, msg.message_id, msg.timestamp, msg.data);
 }

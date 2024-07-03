@@ -13,11 +13,11 @@
 #include <errno.h> // error codes
 
 #include <sys/socket.h>
-// #include <netdb.h>  
 
 #include "tcp_server.h"
 #include "tcp_settings.h"
 #include "tcp_functions.h"
+#include "message.h"
 
 /**
  * @brief Init address to which server socket is bound
@@ -62,7 +62,17 @@ void start_server() {
 
     int connfd = accept_connection(sockfd, &cliaddr);
     printf("Connection fd: %d\n", sockfd);
-    pong(connfd);
+
+    Message msg;
+    receive_structured_message(connfd, &msg);
+    // apply_function_to_message(&msg);
+
+    printf("Processed message: Caller ID=%s, Message ID=%s, Timestamp=%ld, Data=%s\n", 
+           msg.caller_id, msg.message_id, msg.timestamp, msg.data);
+
+    // Optionally send the processed message back to the client
+    // send_structured_message(connfd, &msg);
+    // pong(connfd);
 
     close_socket(sockfd);
 }

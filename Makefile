@@ -38,11 +38,11 @@ $(BUILD_DIR):
 # TCP_CLIENT_OBJECTS = $(TCP_CLIENT_SOURCES:%.c=build/%.o)
 
 ### Server Configuration
-TCP_SERVER_SOURCE = $(TCP_HOME)/tcp_server.c $(TCP_HOME)/tcp_functions.c 
+TCP_SERVER_SOURCE = $(TCP_HOME)/tcp_server.c $(TCP_HOME)/tcp_functions.c $(TCP_HOME)/message.c
 TCP_SERVER_TARGET = $(BUILD_DIR)/tcp_server
 
 ### Client configuration
-TCP_CLIENT_SOURCE = $(TCP_HOME)/tcp_client.c $(TCP_HOME)/tcp_functions.c
+TCP_CLIENT_SOURCE = $(TCP_HOME)/tcp_client.c $(TCP_HOME)/tcp_functions.c $(TCP_HOME)/message.c
 TCP_CLIENT_TARGET = $(BUILD_DIR)/tcp_client
 
 ## Compile targets

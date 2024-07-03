@@ -53,6 +53,8 @@
         "optional": "cpp",
         "queue": "cpp",
         "stack": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "__availability": "c",
+        "message.h": "c"
     }
 }
