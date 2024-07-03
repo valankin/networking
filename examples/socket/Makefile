@@ -1,3 +1,5 @@
+# Example TCP server Makefile
+
 # Compiler configuration
 
 ## CC specifies which compiler we're using
@@ -29,7 +31,6 @@ CLIENT_SOURCE = client.c
 
 client: $(CLIENT_SOURCE)
 	$(CC) -std=$(STD_C) -o $(CLIENT_OBJ) $(CLIENT_SOURCE)
-
 
 
 # Server - Client chat over TCP
