@@ -3,13 +3,14 @@ Learn networking from scratch
 
 
 ## Quickstart
+
 Compile and run ping and pong functions over TCP socket
 ```sh
-make tcp_server
-make tcp_client
+make tcp
 
-./tcp_server
-./tcp_client
+# Run server and client
+./build/tcp_server
+./build/tcp_client
 ```
 
 

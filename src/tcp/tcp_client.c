@@ -16,6 +16,11 @@
 #include "tcp_settings.h"
 
 
+/**
+ * @brief Connection address
+ * 
+ * @return struct sockaddr_in 
+ */
 struct sockaddr_in server_address()
 {
     struct sockaddr_in servaddr;
@@ -28,8 +33,7 @@ struct sockaddr_in server_address()
     return servaddr;
 }
 
-int main() {
-
+int start_client() {
     // init server address sreucture
     struct sockaddr_in servaddr = server_address();
  
@@ -37,7 +41,6 @@ int main() {
     int sockfd = create_socket();
     printf("Socket fd: %d\n", sockfd);
 
-    
     // Connect to socket
     int conn_code = connect_to_socket(sockfd, &servaddr);
 
@@ -49,5 +52,10 @@ int main() {
     // Close the socket
     close_socket(sockfd);
 
+    return 0;
+}
+
+int main() {
+    start_client();
     return 0;
 }

@@ -6,26 +6,24 @@
  *  
  */
 
-#include <stdlib.h>
+// #include <stdlib.h>
 #include <stdio.h> // For printf and getchar
 #include <string.h> // For bzero and strncmp
 #include <unistd.h> // For POSIX read and write
 #include <errno.h> // error codes
 
 #include <sys/socket.h>
-#include <netdb.h>  
-
+// #include <netdb.h>  
 
 #include "tcp_server.h"
 #include "tcp_settings.h"
 #include "tcp_functions.h"
 
-
 /**
- * @brief Function to set up and start the server.
+ * @brief Init address to which server socket is bound
+ * 
+ * @return struct sockaddr_in 
  */
-
-
 struct sockaddr_in listen_address()
 {
     struct sockaddr_in servaddr;
@@ -43,6 +41,9 @@ struct sockaddr_in listen_address()
     return servaddr;
 }
 
+/**
+ * @brief Function to set up and start the server.
+ */
 void start_server() {
     /**
      * @brief Create address structures
@@ -54,13 +55,8 @@ void start_server() {
 
     int sockfd = create_socket();
     printf("Socket fd: %d\n", sockfd);
-
-    
-
-    // printf("%d\n", sockfd);
    
     bind_socket(sockfd, &servaddr);
-
 
     listen_connections(sockfd);
 
@@ -69,4 +65,9 @@ void start_server() {
     pong(connfd);
 
     close_socket(sockfd);
+}
+
+int main() {
+    start_server();
+    return 0;
 }

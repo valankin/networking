@@ -22,11 +22,30 @@
 #include "tcp_settings.h"
 
 
-// Socket and connection
-
-
-
 // Buffer
+
+void clear_buff(char *buff)
+{
+    memset(buff, BUFFER_FILL_VALUE, CHAR_BUFFER_SIZE);
+}
+
+char* heap_buff()
+{
+    int buff_size_bytes = CHAR_BUFFER_SIZE * sizeof(char);
+    char *buff = (char *)malloc(buff_size_bytes);
+    if (buff == NULL) {
+        printf("Failed to allocate [%d bytes] of memory for buffer: (%d) %s\n",
+                buff_size_bytes, 
+                errno, 
+                strerror(errno));        
+        exit(1);
+    }
+    clear_buff(buff);
+
+    printf("Allocated heap buffer of size [%d bytes]\n", buff_size_bytes);
+    return buff;
+}
+
 void exit_if_signalled(char *buff)
 {
     if ((strncmp(buff, "exit", 4)) == 0) {
@@ -102,7 +121,7 @@ int listen_connections(int sockfd)
 
 int accept_connection(int sockfd, struct sockaddr_in* cliaddr)
 {
-     // Accept the data packet from client and verification
+    // Accept the data packet from client
     socklen_t len = sizeof(cliaddr);
     int connfd = accept(sockfd, (struct sockaddr*)&cliaddr, &len);
     if (connfd == SOCK_ACCEPT_ERR) {
@@ -153,7 +172,7 @@ void send_message(char *buff, int sockfd)
  */
 void read_message(int fd, char *buff)
 {
-    memset(buff, BUFFER_FILL_VALUE, CHAR_BUFFER_SIZE);
+    clear_buff(buff);
     read(fd, buff, CHAR_BUFFER_SIZE);
 
     // Clear buffer
@@ -163,35 +182,13 @@ void read_message(int fd, char *buff)
 
 
 // Higher level functions
-void pong(int connfd) {
-    char buff[CHAR_BUFFER_SIZE]; // Message buffer in chars
-    memset(buff, BUFFER_FILL_VALUE, CHAR_BUFFER_SIZE);
-   
-    // Infinite loop for chat
-    for (;;) {
-        // Read from fd into buff
-        read_message(connfd, buff);
-
-        // Checks if input equals "exit"
-        exit_if_signalled(buff);
-
-        // Load message into the buffer
-        load_message(buff);
-
-        // Write buffer into connection fd
-        send_message(buff, connfd);
-
-    }
-}
-
 
 void ping(int sockfd)
 {   
-    // Create buffer for message
-	char buff[CHAR_BUFFER_SIZE];
-    memset(buff, BUFFER_FILL_VALUE, CHAR_BUFFER_SIZE);
+    // Message buffer
+    char* buff = heap_buff();	
 
-    // Chat with server until exit
+    // Send message and receive message
 	for (;;) {
         // Load message into the buffer
         load_message(buff);
@@ -205,4 +202,28 @@ void ping(int sockfd)
         // Read from socket into the buffer
         read_message(sockfd, buff);
 	}
+    free(buff);
+}
+
+void pong(int connfd) {
+
+    // Message buffer
+    char* buff = heap_buff();
+
+    // Read and reply
+    for (;;) {
+        // Read from fd into buff
+        read_message(connfd, buff);
+
+        // Checks if input equals "exit"
+        // TODO: does not exit when typed
+        exit_if_signalled(buff);
+
+        // Load message into the buffer
+        load_message(buff);
+
+        // Write buffer into connection fd
+        send_message(buff, connfd);
+    }
+    free(buff);
 }
