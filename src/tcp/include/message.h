@@ -31,6 +31,7 @@ Message create_default_server_message();
 // typedef void (*send_function_t)(int, const void *);
 // typedef void (*message_function_t)(Message *);
 
+// Use int socketfd to send a message
 typedef void (*message_function_t)(int, const void *);
 
 // Function to find a function by name

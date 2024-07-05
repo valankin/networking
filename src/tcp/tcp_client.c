@@ -63,8 +63,8 @@ int start_client(Message *msg) {
         message_function_t func = get_function_by_name(msg->function_name);
         printf("Called function: %p\n", func);
         if (func) {
-            printf("Using socket fd %d to send message...\n", sockfd); // Debugging statement
-            func(sockfd, msg); // Pass the socket fd and the message
+            printf("Using socket fd %d to send message...\n", sockfd);
+            func(sockfd, msg);
         } else {
             printf("Function '%s' not found.\n", msg->function_name);
         }

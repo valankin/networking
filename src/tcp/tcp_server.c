@@ -6,10 +6,10 @@
  *  
  */
 
-// #include <stdlib.h>
-#include <stdio.h> // For printf and getchar
-#include <string.h> // For bzero and strncmp
-#include <unistd.h> // For POSIX read and write
+#include <stdlib.h> // getenv
+#include <stdio.h> // printf and getchar
+#include <string.h> // bzero and strncmp
+#include <unistd.h> // POSIX read and write
 #include <errno.h> // error codes
 
 #include <sys/socket.h>
@@ -68,7 +68,10 @@ void start_server() {
     // apply_function_to_message(&msg);
 
     printf("Processed message: Caller ID=%s, Message ID=%s, Timestamp=%ld, Data=%s\n", 
-           msg.caller_id, msg.message_id, msg.timestamp, msg.data);
+           msg.caller_id, 
+           msg.message_id, 
+           msg.timestamp, 
+           msg.data);
 
     // Optionally send the processed message back to the client
     // send_structured_message(connfd, &msg);
@@ -78,6 +81,20 @@ void start_server() {
 }
 
 int main() {
+
+    
+    char *db_host = getenv("DB_HOST");
+    char *db_user = getenv("DB_USER");
+    char *db_pass = getenv("DB_PASS");
+
+    if (db_host && db_user && db_pass) {
+        printf("DB Host: %s\n", db_host);
+        printf("DB User: %s\n", db_user);
+        printf("DB Pass: %s\n", db_pass);
+    } else {
+        printf("Environment variables not set.\n");
+    }
+
     start_server();
     return 0;
 }
